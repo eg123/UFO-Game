@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+<head>
+<title>HTML5 UFO Game</title>
+<link href='http://fonts.googleapis.com/css?family=Short+Stack' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Actor' rel='stylesheet' type='text/css'>
+<style type="text/css">
+.wrapper{
+	width:800px;
+	margin:auto;
+}
+
+.wrapper h1{
+	font-family:'Short Stack', sans-serif;
+	font-weight:bold;
+}
+.wrapper p{
+	font-family:'Actor', sans-serif;
+}
+.wrapper a{
+	color:#3286FF;
+}
+.help{
+	color:#666;
+	box-shadow:#ccc 0px 0px 10px;
+	padding:10px;
+	border-radius:5px;
+}
+.help .key{
+	display:inline-block;
+	width:26px;
+	height:20px;
+	line-height:20px;
+	background:white;
+	border:1px solid #ccc;
+	color:#666;
+	border-radius:5px;
+	box-shadow:#ccc 1px 1px 2px;
+	text-align:center;
+	font-style:normal;
+	margin:0px 2px;
+}
+#container{
+	width:800px;
+	height:600px;
+	position:relative;
+}
+#msg, #score{
+	width:100%;
+	height:100%;
+	position:absolute;
+	top:0px;
+	left:0px;
+}
+#msg h1, #score h1{
+	font-weight:normal;
+}
+#msg{
+	background:rgba(0,0,0,0.5);
+	z-index:2;
+}
+#msg .d{
+	color:white;
+	font-family:'Short Stack';
+	text-shadow:black 1px 1px 2px;
+	display:table-cell;
+	text-align:center;
+	vertical-align: middle;
+	width:800px;
+	height:600px;
+}
+#msg.hide{
+	visibility:hidden;
+}
+#msg.show{
+	visibility:visible;
+}
+#msg *, #score{
+	-webkit-transition-property:opacity;
+	-webkit-transition-duration: 0.5s;
+	-moz-transition-property:opacity;
+	-moz-transition-duration: 0.5s;
+}
+#msg.hide *{
+	opacity:0;
+}
+#msg.show *{
+	opacity:1;
+}
+#msg .score b{
+	background:#222;
+	padding:5px;
+	border-radius:5px;
+}
+#score{
+	z-index:1;
+	font-family:'Short Stack';
+	color:#4F99FF;
+}
+#score .m{
+	margin:15px;
+}
+#score.hide{
+	-webkit-transition-duration: 0.2s;
+	-moz-transition-duration: 0.2s;
+	opacity:0;
+}
+#score.show{
+	-webkit-transition-duration: 2s;
+	-moz-transition-duration: 2s;
+	opacity:1;
+}
+#score .cube{
+	display:inline-block;
+	float:left;
+	width:10px;
+	height:10px;
+	border:3px solid #4F99FF;
+	border-radius:5px;
+	margin-right:10px;
+}
+#score .cube.f{
+	background:#4F99FF;
+}
+#score .score{
+	float:right;
+	font-weight:bold;
+}
+.contact{
+	height:50px;
+	vertical-align:bottom;
+	display:table-cell;
+	color:#666;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+.contact:hover{
+	color:#000;
+}
+.contact a{
+	display:inline-block;
+	width:20px;
+	height:20px;
+	background:url(static/sn.png);
+	background-size:60px 40px;
+	-webkit-transition: all 0.1s ease;
+	-moz-transition: all 0.1s ease;
+	transition: all 0.1s ease;
+	margin:-2px 2px;
+}
+.contact a:hover{
+	width:32px;
+	height:32px;
+	background-size:96px 64px;
+	margin:-6px 2px;
+}
+.contact a.gp{
+	background-position:20px 0px;
+}
+.contact a.fb{
+	background-position:0px 0px;
+}
+.contact a.tw{
+	background-position:40px 0px;
+}
+.contact a.gp:hover{
+	background-position:32px 32px;
+}
+.contact a.fb:hover{
+	background-position:0px 32px;
+}
+.contact a.tw:hover{
+	background-position:64px 32px;
+}
+</style>
+<script type="text/javascript" src="static/core.js"></script>
+<!--[if IE]><script type="text/javascript" src="static/excanvas.compiled.js"></script><![endif]-->
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<script type="text/javascript">
+	function initialize() {
+		game = cubeGame($("canvas"), 800, 600);
+		game.addEventListener();
+		game.catchEvents(function(event) {
+			 switch (event) {
+			 	case 'play' :
+			 		$("msg").className = "hide";
+			 		$("score").className = "show";
+			 	break;
+			 	case 'paused' :
+			 		$("msg").innerHTML = "<h1 class=\"d\">Paused</h1>";
+			 		$("msg").className = "show";
+			 		$("score").className = "hide";
+			 	break;
+			 	case 'progress' :
+		 			var lives = game.getLives(), l = 3, s = "";
+		 			for(; l>0; l--)
+		 				s = "<div class=\"cube"+(l <= lives ? " f" : "")+"\"></div>" + s;
+		 			
+		 			s+= "<div class=\"score\">" + game.getScore() + "</div>";
+		 			
+		 			$("score").innerHTML = "<div class=\"m\">" + s + "</div>";
+			 	break;
+			 	case 'gameOver':
+			 		$("msg").innerHTML = "<div class=\"d\"><h1>:( Game Over</h1> <p class=\"score\"><b>Your score: " + game.getScore() + "</b></p> <p>Press enter to start a new game</p></div>"
+			 		$("msg").className = "show";
+			 		$("score").className = "hide";
+			 	break;
+			 }
+		});
+		
+		game.start();
+		game.pause();
+		
+		addEvent($("container"), "click", pause);
+		
+		$("msg").innerHTML = "<h1 class=\"d\">Press enter to start</h1>";
+	}
+
+	function pause() {
+		if (game.isGameOver())
+			game.start();
+		else if (game.isPaused()) 
+			game.play();
+		else 
+			game.pause();	
+	}
+
+	window.onload = initialize;
+</script>
+</head>
+<body>
+	<div class="wrapper">
+		<h1>HTML5 UFO Game</h1>
+		<div id="container">
+			<div id="score" class="hide"></div>
+			<div id="msg" class="hide"></div>
+			<canvas id="canvas"></canvas>
+		</div>
+		<p class="help">
+			<b>Help:</b> Use the arrows <i class="key">&larr;</i> <i class="key">&rarr;</i> to skip the cubes.
+		</p>
+		<p>
+			This demo was created using the canvas object and other features of HTML5. Code: <a href="static/core.js" target="_blank">core.js</a>
+		</p>
+		<p class="contact">
+			Contact me: <a class="tw" href="http://www.twitter.com/blasten"></a> <a class="gp" href="http://plus.google.com/108394974678607829480"></a> <a class="fb" href="http://www.facebook.com/blasten"></a>
+		</p>
+	</div>
+</body>
+</html>

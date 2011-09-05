@@ -1,0 +1,14 @@
+application: ufo-game
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+# http://code.google.com/appengine/docs/python/config/appconfig.html
+
+- url: /static/(.*\.(gif|png|jpg|js))
+  static_files: static/\1
+  upload: static/(.*\.(gif|png|jpg|js))
+
+- url: /.*
+  script: main.py
