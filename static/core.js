@@ -114,32 +114,32 @@ function cubeGame(canvas, width, height) {
 		
 		cube = function (coord, size, color) {
 			var color = color.brightness(Math.max(1 - ((coord.z / 5000) * 0.5), 0.3)), 
-			//Front coords
+			// Front coords
 				f  = cubeFront(coord, size),
-			//Back coords		 
+			// Back coords		 
 				b = [P3(coord.x, coord.y, coord.z + size), 
 					 P3(coord.x + size, coord.y, coord.z + size),
 					 P3(coord.x + size, coord.y + size, coord.z + size),
 					 P3(coord.x, coord.y + size, coord.z + size)];
 		
-			//Right side
+			// Right side
 			if (insidePoint(get2DCoord(f[1]), get2DCoord(f[2]), get2DCoord(b[2]), 'right'))
 				drawShape([f[1], b[1], b[2], f[2]], color.brightness(0.5).toString());
 			  
-			//Left side
+			// Left side
 			if (insidePoint(get2DCoord(f[0]), get2DCoord(f[3]), get2DCoord(b[3]) , 'left'))
 				drawShape([f[0], f[3], b[3], b[0]], color.brightness(0.5).toString());
 			
-			//Top side
+			// Top side
 			if (insidePoint(get2DCoord(f[3]), get2DCoord(f[2]), get2DCoord(b[2]), 'top'))
 				drawShape([f[3], f[2], b[2], b[3]], color.brightness(0.8).toString());
 			
-			//Bottom side
+			// Bottom side
 			if (insidePoint(get2DCoord(f[0]), get2DCoord(f[1]), get2DCoord(b[1]), 'bottom'))
 				drawShape([f[0], f[1], b[1], b[0]], color.brightness(0.1).toString());
 
 
-			//Front side
+			// Front side
 			drawShape(f, color.toString());
 		},
 		
@@ -183,10 +183,12 @@ function cubeGame(canvas, width, height) {
 		get2DCoord = function(coord) {
 			var  e = that.getEye(), p = transformCoord(coord), d;
 			
-			/*Make 3D projection*/
+			// Make 3D projection
+			// http://petesqbsite.com/sections/tutorials/tuts/perspective.html
 			d = P2(e.z * (p.x-e.x) / (e.z+p.z), e.z * (p.y-e.y) / (e.z+p.z));
 			
-			/*Apply rotation matrix*/
+			// Apply rotation matrix
+			// http://en.wikipedia.org/wiki/Rotation_matrix
 			x2D = d.x * Math.cos(angle) + d.y * Math.sin(angle) + e.x;
 			y2D = d.x * -Math.sin(angle) + d.y * Math.cos(angle) + e.y;
 			
@@ -224,8 +226,11 @@ function cubeGame(canvas, width, height) {
 					point = b[i-aL];
 					nextPoint = b[i-aL+1] || b[0];
 				}
-				edge = P2(nextPoint.x-point.x, nextPoint.y-point.y); // nextPoint-point 
-			    axis = P2(-edge.y, edge.x); //perpendicular vector of edge
+				// nextPoint-point 
+				edge = P2(nextPoint.x-point.x, nextPoint.y-point.y); 
+				
+				// Perpendicular vector of edge
+			    axis = P2(-edge.y, edge.x);
 			    
 			  	aProj = project(axis, a);
 			  	bProj = project(axis, b);
@@ -311,8 +316,7 @@ function cubeGame(canvas, width, height) {
 					c = cubes[j];
 					c.pos.z = maxZ - ((time-c.time) / cubeDuration) * maxZ;
 			
-					if (c.pos.z < 0  && !c.deleted  && collision(cubeFront(c.pos, c.size), disc.pos)
-						) {
+					if (c.pos.z < 0  && !c.deleted  && collision(cubeFront(c.pos, c.size), disc.pos)) {
 							c.color = RGBA(255, 0, 0);
 							c.deleted = true;
 							lives--;
